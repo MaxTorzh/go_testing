@@ -6,6 +6,6 @@ type User struct {
 	Age  int    `json:"age"`
 }
 
-type Error struct {
+type ErrorResponse struct {
 	Error string `json:"error"`
 }
