@@ -1,7 +1,7 @@
 package task4
 
 import (
-	"math"
+	"math/big"
 	"strings"
 )
 
@@ -48,33 +48,16 @@ func Sum(nums []int) int {
 	return total
 }
 
-func SumPositive(nums []int) bool {
-	if len(nums) == 0 {
-		return true
-	}
-
-	maxAllowed := math.MaxInt / len(nums)
-
-	var sum int = 0
-	hasPositive := false
-
-	for _, n := range nums {
-		if n > 0 {
-			if n > maxAllowed {
-				return true
-			}
-			hasPositive = true
-
-			if sum > math.MaxInt-n {
-				return false
-			}
-			sum += n
-		}
-	}
-
-	if !hasPositive {
-		return true
-	}
-
-	return sum > 0
+func HasPositiveSum(nums []int) bool {
+    sum := big.NewInt(0)
+    hasPositive := false
+    
+    for _, n := range nums {
+        if n > 0 {
+            hasPositive = true
+            sum.Add(sum, big.NewInt(int64(n)))
+        }
+    }
+    
+    return hasPositive && sum.Sign() > 0
 }

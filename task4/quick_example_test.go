@@ -1,6 +1,8 @@
 package task4
 
 import (
+	"math"
+	"strings"
 	"testing"
 	"testing/quick"
 )
@@ -49,8 +51,9 @@ func TestAdditiveInverse(t *testing.T) {
 
 func TestPalindromeProperty(t *testing.T) {
 	property := func(s string) bool {
+		normalized := strings.ToLower(strings.ReplaceAll(s, " ", ""))
 		if IsPalindrome(s) {
-			return Reverse(s) == s
+			return Reverse(normalized) == normalized
 		}
 		return true
 	}
@@ -64,22 +67,32 @@ func TestPalindromeProperty(t *testing.T) {
 	}
 }
 
-func TestSumPositive(t *testing.T) {
-	property := func(nums []int) bool {
-		return SumPositive(nums)
-	}
-
-	config := &quick.Config{
-		MaxCount: 200,
-	}
-
-	if err := quick.Check(property, config); err != nil {
-		t.Errorf("SumPositive failed: %v", err)
+func TestHasPositiveSum(t *testing.T) {
+	tests := []struct {
+        name  string
+        nums  []int
+        want  bool
+    }{
+        {"пустой слайс", []int{}, false},
+        {"только отрицательные", []int{-1, -2, -3}, false},
+        {"только нули", []int{0, 0, 0}, false},
+        {"одно положительное", []int{5}, true},
+        {"несколько положительных", []int{1, 2, 3}, true},
+        {"смешанные", []int{-5, 10, -3, 2}, true},
+        {"большие числа", []int{math.MaxInt64, 1}, true},
+    }
+    
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            got := HasPositiveSum(tt.nums)
+            if got != tt.want {
+                t.Errorf("HasPositiveSum(%v) = %v, want %v", tt.nums, got, tt.want)
+            }
+        })
 	}
 }
 
 // Интеграционный тест с quick
-
 func TestAllProperties(t *testing.T) {
 	properties := []struct {
 		name     string
